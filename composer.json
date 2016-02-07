@@ -1,5 +1,5 @@
 {
-  "name": "nilportugues/file-repository",
+  "name": "nilportugues/filesystem-repository",
   "description": "FileSystem Repository implementation",
   "keywords": ["file", "repository", "cache", "ddd", "hexagonal", "ports and adapters", "ports", "adapters", "repository", "pageable", "pagination", "nil portugues", "nilportugues"],
   "type": "library",
