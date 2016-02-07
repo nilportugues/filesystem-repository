@@ -1,4 +1,5 @@
 <?php
+
 use NilPortugues\Example\Repository\Identity;
 use NilPortugues\Example\Repository\Color;
 use NilPortugues\Foundation\Domain\Model\Repository\Filter;
@@ -14,7 +15,6 @@ $fileRepository->addAll([new Color('Red', 1), new Color('Blue', 2)]);
 $filter = new Filter();
 $filter->must()->equals('id', 1);
 print_r($fileRepository->findBy($filter));
-
 
 $id = new Identity(2);
 if ($fileRepository->exists($id)) {

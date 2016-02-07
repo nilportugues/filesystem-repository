@@ -45,6 +45,10 @@ class NativeFileSystem implements FileSystem
     {
         $filePath = $this->calculateFilePath($filePath);
 
+        if (false === file_exists($filePath)) {
+            return;
+        }
+
         return unserialize(file_get_contents($filePath));
     }
 
