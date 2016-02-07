@@ -1,15 +1,16 @@
 <?php
+
 /**
  * Author: Nil Portugués Calderó <contact@nilportugues.com>
  * Date: 6/02/16
- * Time: 13:05
+ * Time: 13:05.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 namespace NilPortugues\Foundation\Infrastructure\Model\Repository\FileSystem;
 
+use NilPortugues\Assert\Assert;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Fields;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Filter;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Identity;
@@ -19,12 +20,13 @@ use NilPortugues\Foundation\Domain\Model\Repository\Contracts\PageRepository;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\ReadRepository;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\Sort;
 use NilPortugues\Foundation\Domain\Model\Repository\Contracts\WriteRepository;
+use NilPortugues\Foundation\Domain\Model\Repository\Page as ResultPage;
 use NilPortugues\Foundation\Infrastructure\Model\Repository\FileSystem\Contracts\FileSystem;
 use NilPortugues\Foundation\Infrastructure\Model\Repository\InMemory\Filter as InMemoryFilter;
 use NilPortugues\Foundation\Infrastructure\Model\Repository\InMemory\Sorter as InMemorySorter;
 
 /**
- * Class FileSystemRepository
+ * Class FileSystemRepository.
  */
 class FileSystemRepository implements ReadRepository, WriteRepository, PageRepository
 {
@@ -53,32 +55,7 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
      */
     public function find(Identity $id, Fields $fields = null)
     {
-        $fileContent = $this->fileSystem->read($id->id());
-
-        return unserialize($fileContent);
-    }
-
-    /**
-     * Returns all instances of the type.
-     *
-     * @param Filter|null $filter
-     * @param Sort|null   $sort
-     * @param Fields|null $fields
-     *
-     * @return array
-     */
-    public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null)
-    {
-        $allFiles = $this->fileSystem->files();
-
-        foreach($allFiles as &$fileContent) {
-            $fileContent = unserialize($fileContent);
-        }
-
-        $allFiles = InMemoryFilter::filter($allFiles, $filter);
-        $allFiles = InMemorySorter::sort($allFiles, $sort);
-
-        return $allFiles;
+        return $this->fileSystem->read($id->id());
     }
 
     /**
@@ -92,7 +69,7 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
     {
         $allFiles = $this->fileSystem->files();
 
-        if($filter) {
+        if ($filter) {
             $allFiles = InMemoryFilter::filter($allFiles, $filter);
         }
 
@@ -108,19 +85,7 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
      */
     public function exists(Identity $id)
     {
-
-    }
-
-    /**
-     * Adds a new entity to the storage.
-     *
-     * @param Identity $value
-     *
-     * @return mixed
-     */
-    public function add(Identity $value)
-    {
-
+        return $this->fileSystem->exists($id);
     }
 
     /**
@@ -132,17 +97,22 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
      */
     public function addAll(array $values)
     {
-
+        foreach ($values as $value) {
+            Assert::isInstanceOf($value, Identity::class);
+            $this->add($value);
+        }
     }
 
     /**
-     * Removes the entity with the given id.
+     * Adds a new entity to the storage.
      *
-     * @param $id
+     * @param Identity $value
+     *
+     * @return mixed
      */
-    public function remove(Identity $id)
+    public function add(Identity $value)
     {
-
+        $this->fileSystem->write($value->id(), $value);
     }
 
     /**
@@ -155,7 +125,54 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
      */
     public function removeAll(Filter $filter = null)
     {
+        if (null === $filter) {
+            $this->fileSystem->deleteAll();
 
+            return true;
+        }
+
+        $elements = (array) $this->findBy($filter);
+        foreach ($elements as $element) {
+            $this->remove($element);
+        }
+
+        return true;
+    }
+
+    /**
+     * Returns all instances of the type.
+     *
+     * @param Filter|null $filter
+     * @param Sort|null   $sort
+     * @param Fields|null $fields
+     *
+     * @return array
+     */
+    public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null)
+    {
+        $allFiles = array_map(function ($v) {
+            return unserialize(file_get_contents($v));
+        }, $this->fileSystem->files());
+
+        if ($filter) {
+            $allFiles = InMemoryFilter::filter($allFiles, $filter);
+        }
+
+        if ($sort) {
+            $allFiles = InMemorySorter::sort($allFiles, $sort);
+        }
+
+        return $allFiles;
+    }
+
+    /**
+     * Removes the entity with the given id.
+     *
+     * @param $id
+     */
+    public function remove(Identity $id)
+    {
+        $this->fileSystem->delete($id);
     }
 
     /**
@@ -167,6 +184,19 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
      */
     public function findAll(Pageable $pageable = null)
     {
+        if (null === $pageable) {
+            $files = $this->findBy();
 
+            return new ResultPage($files, count($files), 1, 1);
+        }
+
+        $results = $this->findBy($pageable->filters(), $pageable->sortings());
+
+        return new ResultPage(
+            array_slice($results, $pageable->offset() - $pageable->pageSize(), $pageable->pageSize()),
+            count($results),
+            $pageable->pageNumber(),
+            ceil(count($results) / $pageable->pageSize())
+        );
     }
 }

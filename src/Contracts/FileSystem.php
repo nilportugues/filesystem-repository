@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Author: Nil Portugués Calderó <contact@nilportugues.com>
  * Date: 6/02/16
- * Time: 13:32
+ * Time: 13:32.
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -31,27 +32,11 @@ interface FileSystem
      * Writes a file to the file system.
      *
      * @param string $filePath
+     * @param string $contents
      *
      * @return mixed
      */
-    public function write($filePath);
-
-    /**
-     * Given an existing file path, move the file to the new file path.
-     *
-     * @param string $filePath
-     * @param string $newFilePath
-     *
-     * @return void
-     */
-    public function move($filePath, $newFilePath);
-
-    /**
-     * Counts files in the directory recursively.
-     *
-     * @return mixed
-     */
-    public function count();
+    public function write($filePath, $contents);
 
     /**
      * Returns a flat array containing a list of files in a directory.
@@ -70,8 +55,13 @@ interface FileSystem
 
     /**
      * Deletes all file from the base directory given the current file system.
-     *
-     * @return void
      */
     public function deleteAll();
+
+    /**
+     * @param string $filePath
+     *
+     * @return bool
+     */
+    public function exists($filePath);
 }
