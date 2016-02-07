@@ -150,9 +150,7 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
      */
     public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null)
     {
-        $allFiles = array_map(function ($v) {
-            return unserialize(file_get_contents($v));
-        }, $this->fileSystem->files());
+        $allFiles = $this->fileSystem->files();
 
         if ($filter) {
             $allFiles = InMemoryFilter::filter($allFiles, $filter);

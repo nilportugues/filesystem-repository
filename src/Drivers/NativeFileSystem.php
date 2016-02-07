@@ -142,7 +142,7 @@ class NativeFileSystem implements FileSystem
             if (\is_dir($file)) {
                 $this->filesRecursively($file, $files);
             } else {
-                $files[] = $file;
+                $files[] = unserialize(file_get_contents($file));
             }
         }
     }
