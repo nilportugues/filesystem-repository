@@ -1,6 +1,6 @@
 # FileSystem Repository
 
-[![Build Status](https://travis-ci.org/nilportugues/php-filesystem-repository.svg)](https://travis-ci.org/nilportugues/php-filesystem-repository) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nilportugues/php-filesystem-repository/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nilportugues/php-filesystem-repository/?branch=master) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/76361296-1319-4b83-a79a-63827f0d75fd/mini.png)](https://insight.sensiolabs.com/projects/76361296-1319-4b83-a79a-63827f0d75fd) [![Latest Stable Version](https://poser.pugx.org/nilportugues/filesystem-repository/v/stable)](https://packagist.org/packages/nilportugues/filesystem-repository) [![Total Downloads](https://poser.pugx.org/nilportugues/filesystem-repository/downloads)](https://packagist.org/packages/nilportugues/filesystem-repository) [![License](https://poser.pugx.org/nilportugues/filesystem-repository/license)](https://packagist.org/packages/nilportugues/filesystem-repository)
+[![Build Status](https://travis-ci.org/nilportugues/php-filesystem-repository.svg)](https://travis-ci.org/nilportugues/php-filesystem-repository) [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/nilportugues/php-filesystem-repository/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/nilportugues/php-filesystem-repository/?branch=master) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/76361296-1319-4b83-a79a-63827f0d75fd/mini.png?)](https://insight.sensiolabs.com/projects/76361296-1319-4b83-a79a-63827f0d75fd) [![Latest Stable Version](https://poser.pugx.org/nilportugues/filesystem-repository/v/stable)](https://packagist.org/packages/nilportugues/filesystem-repository) [![Total Downloads](https://poser.pugx.org/nilportugues/filesystem-repository/downloads)](https://packagist.org/packages/nilportugues/filesystem-repository) [![License](https://poser.pugx.org/nilportugues/filesystem-repository/license)](https://packagist.org/packages/nilportugues/filesystem-repository)
 
 FileSystem Repository to be used with **[nilportugues/repository](https://github.com/nilportugues/php-repository)**.
 
@@ -16,6 +16,47 @@ $ composer require nilportugues/filesystem-repository
 ## Usage
 
 ```php
+<?php
+use NilPortugues\Foundation\Infrastructure\Model\Repository\FileSystem\Drivers\NativeFileSystem;
+use NilPortugues\Foundation\Infrastructure\Model\Repository\FileSystem\FileSystemRepository;
+
+//-------------------------------------------------------------------
+// Setting up the repository directory and how it will be access:
+//-------------------------------------------------------------------
+$baseDir = __DIR__.'/data/colors';
+$fileSystem = new NativeFileSystem($baseDir);
+$fileRepository = new FileSystemRepository($fileSystem);
+
+//-------------------------------------------------------------------
+// Create sample data
+//-------------------------------------------------------------------
+$red = new Color('Red', 1);
+$blue = new Color('Blue', 2)
+$fileRepository->addAll([$red, $blue]);
+
+//-------------------------------------------------------------------
+// Now let's try filtering by id
+//-------------------------------------------------------------------
+$filter = new Filter();
+$filter->must()->equals('id', 1); //id is a Color property.
+
+print_r($fileRepository->findBy($filter));
+
+//-------------------------------------------------------------------
+// Now let's try filtering by contaning 'e' in the name and sort them.
+//-------------------------------------------------------------------
+$filter = new Filter();
+$filter->must()->contains('name', 'e'); //name is a Color property.
+
+$sort = new Sort();
+$sort->setOrderFor('name', new Order('DESC'));
+
+print_r($fileRepository->findBy($filter, $sort)); // This will return both values.
+
+//-------------------------------------------------------------------
+//Lets remove all colors from the repository
+//-------------------------------------------------------------------
+$fileRepository->removeAll();
 ```
 
 
