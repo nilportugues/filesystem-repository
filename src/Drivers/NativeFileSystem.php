@@ -11,6 +11,7 @@
 namespace NilPortugues\Foundation\Infrastructure\Model\Repository\FileSystem\Drivers;
 
 use NilPortugues\Foundation\Infrastructure\Model\Repository\FileSystem\Contracts\FileSystem;
+use RuntimeException;
 
 /**
  * Class NativeFileSystem.
@@ -32,6 +33,12 @@ class NativeFileSystem implements FileSystem
     public function __construct($baseDir)
     {
         $this->baseDir = realpath($baseDir);
+
+        if (false === file_exists($this->baseDir)) {
+            throw new RuntimeException(
+               sprintf('Provided base directory \'%s\' does not exist', $baseDir)
+           );
+        }
     }
 
     /**

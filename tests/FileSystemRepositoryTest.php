@@ -20,6 +20,7 @@ use NilPortugues\Foundation\Infrastructure\Model\Repository\FileSystem\Drivers\N
 use NilPortugues\Foundation\Infrastructure\Model\Repository\FileSystem\FileSystemRepository;
 use NilPortugues\Tests\Foundation\Infrastructure\Model\Repository\FileSystem\Dummies\Clients;
 use NilPortugues\Tests\Foundation\Infrastructure\Model\Repository\FileSystem\Dummies\ObjectId;
+use RuntimeException;
 
 class FileSystemRepositoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -102,6 +103,12 @@ class FileSystemRepositoryTest extends \PHPUnit_Framework_TestCase
     public function tearDown()
     {
         $this->repository->removeAll();
+    }
+
+    public function testWithThrowExceptionOnConstruct()
+    {
+        $this->setExpectedException(RuntimeException::class);
+        new FileSystemRepository(new NativeFileSystem('@'));
     }
 
     public function testFindAll()
