@@ -136,7 +136,7 @@ class FileSystemRepositoryTest extends \PHPUnit_Framework_TestCase
     public function testCountWithFilter()
     {
         $filter = new Filter();
-        $filter->must()->contains('name', 'Ken');
+        $filter->must()->contain('name', 'Ken');
 
         $this->assertEquals(1, $this->repository->count($filter));
     }
@@ -182,7 +182,7 @@ class FileSystemRepositoryTest extends \PHPUnit_Framework_TestCase
     public function testRemoveAllWithFilter()
     {
         $filter = new Filter();
-        $filter->must()->contains('name', 'Doe');
+        $filter->must()->contain('name', 'Doe');
 
         $this->repository->removeAll($filter);
         $this->assertFalse($this->repository->exists(new ObjectId(1)));
@@ -220,7 +220,7 @@ class FileSystemRepositoryTest extends \PHPUnit_Framework_TestCase
         $sort = new Sort(['name'], new Order('ASC'));
 
         $filter = new Filter();
-        $filter->must()->contains('name', 'Ken');
+        $filter->must()->contain('name', 'Ken');
 
         $expected = [
             new Clients(
@@ -247,7 +247,7 @@ class FileSystemRepositoryTest extends \PHPUnit_Framework_TestCase
 
         $sort = new Sort(['name'], new Order('ASC'));
         $filter = new Filter();
-        $filter->must()->contains('name', 'Ken');
+        $filter->must()->contain('name', 'Ken');
 
         $this->assertEquals([], $this->repository->findBy($filter, $sort));
     }
