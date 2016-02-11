@@ -38,7 +38,7 @@ $fileRepository->addAll([$red, $blue]);
 // Now let's try filtering by id
 //-------------------------------------------------------------------
 $filter = new Filter();
-$filter->must()->equals('id', 1); //id is a Color property.
+$filter->must()->equal('id', 1); //id is a Color property.
 
 print_r($fileRepository->findBy($filter));
 
@@ -46,7 +46,7 @@ print_r($fileRepository->findBy($filter));
 // Now let's try filtering by contaning 'e' in the name and sort them.
 //-------------------------------------------------------------------
 $filter = new Filter();
-$filter->must()->contains('name', 'e'); //name is a Color property.
+$filter->must()->contain('name', 'e'); //name is a Color property.
 
 $sort = new Sort();
 $sort->setOrderFor('name', new Order('DESC'));
