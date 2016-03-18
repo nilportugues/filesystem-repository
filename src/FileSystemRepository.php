@@ -23,6 +23,7 @@ use NilPortugues\Foundation\Domain\Model\Repository\Contracts\WriteRepository;
 use NilPortugues\Foundation\Domain\Model\Repository\Page as ResultPage;
 use NilPortugues\Foundation\Infrastructure\Model\Repository\FileSystem\Contracts\FileSystem;
 use NilPortugues\Foundation\Infrastructure\Model\Repository\InMemory\Filter as InMemoryFilter;
+use NilPortugues\Foundation\Infrastructure\Model\Repository\InMemory\PropertyValue;
 use NilPortugues\Foundation\Infrastructure\Model\Repository\InMemory\Sorter as InMemorySorter;
 
 /**
@@ -190,11 +191,86 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
 
         $results = $this->findBy($pageable->filters(), $pageable->sortings());
 
+        if (0 !== count($pageable->distinctFields()->get())) {
+            $results = $this->resultsWithDistinctFieldsOnly($pageable->distinctFields(), $results);
+        }
+
         return new ResultPage(
             array_slice($results, $pageable->offset() - $pageable->pageSize(), $pageable->pageSize()),
             count($results),
             $pageable->pageNumber(),
             ceil(count($results) / $pageable->pageSize())
         );
+    }
+
+    /**
+     * Repository data is added or removed as a whole block.
+     * Must work or fail and rollback any persisted/erased data.
+     *
+     * @param callable $transaction
+     *
+     * @throws \Exception
+     */
+    public function transactional(callable $transaction)
+    {
+        $allFiles = $this->fileSystem->files();
+        try {
+            $transaction();
+        } catch (\Exception $e) {
+            foreach (array_diff($this->fileSystem->files(), $allFiles) as $item) {
+                /* @var Identity $item */
+                $this->remove($item);
+            }
+            throw $e;
+        }
+    }
+
+    /**
+     * Returns all instances of the type meeting $distinctFields values.
+     *
+     * @param Fields      $distinctFields
+     * @param Filter|null $filter
+     * @param Sort|null   $sort
+     * @param Fields|null $fields
+     *
+     * @return array
+     */
+    public function findByDistinct(
+        Fields $distinctFields,
+        Filter $filter = null,
+        Sort $sort = null,
+        Fields $fields = null
+    ) {
+        $results = $this->findBy($filter, $sort, $filter);
+
+        return $this->resultsWithDistinctFieldsOnly($distinctFields, $results);
+    }
+
+    /**
+     * @param Fields $distinctFields
+     * @param        $results
+     *
+     * @return array
+     *
+     * @throws \Exception
+     */
+    protected function resultsWithDistinctFieldsOnly(Fields $distinctFields, $results)
+    {
+        $newResults = [];
+        $valueHash = [];
+        foreach ($results as $result) {
+            $distinctValues = [];
+            foreach ($distinctFields->get() as $field) {
+                $distinctValues[$field] = PropertyValue::get($result, $field);
+            }
+
+            $hash = md5(serialize($distinctValues));
+            if (false === in_array($hash, $valueHash)) {
+                $valueHash[] = $hash;
+                $newResults[] = $result;
+            }
+        }
+
+        return $newResults;
     }
 }
