@@ -195,11 +195,14 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
             $results = $this->resultsWithDistinctFieldsOnly($pageable->distinctFields(), $results);
         }
 
+        $pageSize = $pageable->pageSize();
+        $pageSize = ($pageSize>0) ? $pageSize : 1;
+
         return new ResultPage(
-            array_slice($results, $pageable->offset() - $pageable->pageSize(), $pageable->pageSize()),
+            array_slice($results, $pageable->offset() - $pageable->pageSize(), $pageSize),
             count($results),
             $pageable->pageNumber(),
-            ceil(count($results) / $pageable->pageSize())
+            ceil(count($results) / $pageSize)
         );
     }
 
