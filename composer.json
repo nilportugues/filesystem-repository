@@ -12,7 +12,8 @@
     }
   ],
   "require": {
-    "nilportugues/repository": "^2.3",
+    "php": ">=7.0",
+    "nilportugues/repository": "^3.0",
     "nilportugues/assert": "^1.0"
   },
   "require-dev": {

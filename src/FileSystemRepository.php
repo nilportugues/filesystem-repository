@@ -66,7 +66,7 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
      *
      * @return int
      */
-    public function count(Filter $filter = null)
+    public function count(Filter $filter = null) : int
     {
         $allFiles = $this->fileSystem->files();
 
@@ -84,7 +84,7 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
      *
      * @return bool
      */
-    public function exists(Identity $id)
+    public function exists(Identity $id) : bool
     {
         return $this->fileSystem->exists($id);
     }
@@ -102,6 +102,7 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
             Assert::isInstanceOf($value, Identity::class);
             $this->add($value);
         }
+        return $values;
     }
 
     /**
@@ -113,7 +114,7 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
      */
     public function add(Identity $value)
     {
-        $this->fileSystem->write($value->id(), $value);
+        return $this->fileSystem->write($value->id(), $value);
     }
 
     /**
@@ -121,15 +122,11 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
      * If $filter is null, all the repository data will be deleted.
      *
      * @param Filter $filter
-     *
-     * @return bool
      */
     public function removeAll(Filter $filter = null)
     {
         if (null === $filter) {
             $this->fileSystem->deleteAll();
-
-            return true;
         }
 
         $elements = (array) $this->findBy($filter);
@@ -137,7 +134,6 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
             $this->remove($element);
         }
 
-        return true;
     }
 
     /**
@@ -149,7 +145,7 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
      *
      * @return array
      */
-    public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null)
+    public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null) : array
     {
         $allFiles = $this->fileSystem->files();
 
@@ -181,7 +177,7 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
      *
      * @return Page
      */
-    public function findAll(Pageable $pageable = null)
+    public function findAll(Pageable $pageable = null) : Page
     {
         if (null === $pageable) {
             $files = $this->findBy();
@@ -237,7 +233,7 @@ class FileSystemRepository implements ReadRepository, WriteRepository, PageRepos
      *
      * @return array
      */
-    public function findByDistinct(Fields $distinctFields, Filter $filter = null, Sort $sort = null) {
+    public function findByDistinct(Fields $distinctFields, Filter $filter = null, Sort $sort = null) : array {
         $results = $this->findBy($filter, $sort, $distinctFields);
 
         return $this->resultsWithDistinctFieldsOnly($distinctFields, $results);

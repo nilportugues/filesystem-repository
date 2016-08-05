@@ -14,7 +14,7 @@ $fileRepository = new FileSystemRepository(new NativeFileSystem(__DIR__.'/db/col
 $fileRepository->addAll([new Color('Red', 1), new Color('Blue', 2)]);
 
 $filter = new Filter();
-$filter->must()->equals('id', 1);
+$filter->must()->equal('id', 1);
 
 $sort = new Sort();
 $sort->setOrderFor('name', new Order('DESC'));
