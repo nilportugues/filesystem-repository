@@ -13,6 +13,7 @@ Table of Contents
   * [Features](#features)
   * [Installation](#installation)
   * [Usage](#usage)
+  * [Repository](#repository)
   * [Data Operations](#data-operations)
     * [Fields](#fields)
     * [Filtering](#filtering)
@@ -92,9 +93,24 @@ print_r($fileRepository->findBy($filter, $sort)); // This will return both value
 $fileRepository->removeAll();
 ```
 
+# Repository 
 
+The repository class implements all the methods required to interact and filter your data. 
 
+- `public function add($value)`
+- `public function addAll(array $values)`
+- `public function remove(Identity $id)`
+- `public function removeAll(Filter $filter = null)`
+- `public function transactional(callable $transaction)`
+- `public function count(Filter $filter = null)`
+- `public function find(Identity $id, Fields $fields = null)`
+- `public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null)`
+- `public function findByDistinct(Fields $distinctFields, Filter $filter = null, Sort $sort = null, Fields $fields = null)`
+- `public function findAll(Pageable $pageable = null)`
+- `public function count(Filter $filter = null)`
+- `public function exists(Identity $id)`
 
+---
 ---
 
 # Data Operations
