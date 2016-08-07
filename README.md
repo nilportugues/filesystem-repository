@@ -7,6 +7,28 @@ FileSystem Repository using *[nilportugues/repository](https://github.com/nilpor
 
 FileSystem Repository allows you to fetch, paginate and operate with data easily without adding overhead and following good practices.
 
+Table of Contents
+=================
+
+  * [Features](#features)
+  * [Installation](#installation)
+  * [Usage](#usage)
+  * [Repository](#repository)
+    * [Methods](#methods)
+      * [Available in SqlRepository](#available-in-sqlrepository)
+      * [Available in SqlWriteRepository](#available-in-sqlwriterepository)
+      * [Available in SqlReadRepository](#available-in-sqlreadrepository)
+      * [Available in SqlPageRepository](#available-in-sqlpagerepository)
+  * [Data Operations](#data-operations)
+    * [Fields](#fields)
+    * [Filtering](#filtering)
+    * [Pagination](#pagination)
+      * [Pageable](#pageable)
+      * [Page object](#page-object)
+    * [Sorting](#sorting)
+      * [Ordering](#ordering)
+
+
 ## Features
 
 - **Repository pattern right from the start.**
