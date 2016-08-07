@@ -102,7 +102,6 @@ The repository class implements all the methods required to interact and filter 
 - `public function remove(Identity $id)`
 - `public function removeAll(Filter $filter = null)`
 - `public function transactional(callable $transaction)`
-- `public function count(Filter $filter = null)`
 - `public function find(Identity $id, Fields $fields = null)`
 - `public function findBy(Filter $filter = null, Sort $sort = null, Fields $fields = null)`
 - `public function findByDistinct(Fields $distinctFields, Filter $filter = null, Sort $sort = null, Fields $fields = null)`
