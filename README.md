@@ -111,7 +111,6 @@ The repository class implements all the methods required to interact and filter 
 - `public function exists(Identity $id)`
 
 ---
----
 
 # Data Operations
 
