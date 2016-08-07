@@ -5,6 +5,22 @@
 
 FileSystem Repository using *[nilportugues/repository](https://github.com/nilportugues/php-repository)* as foundation.
 
+FileSystem Repository allows you to fetch, paginate and operate with data easily without adding overhead and following good practices.
+
+## Features
+
+- **Repository pattern right from the start.**
+- **All operations available from the beginning:**
+  - Search the repository using PHP objects
+  - Filtering is available using the Filter object.
+  - Fetching certaing fields is available using the Fields Object.
+  - Pagination is solved available using the Page and Pageable objects.
+- **Want to change persistence layer? Provided repository alternatives are:**
+  - *[InMemoryRepository](https://github.com/PHPRepository/repository)*: for testing purposes
+  - *[SQL Repository](https://github.com/PHPRepository/sql-repository)*: migration to SQL databases is possible.
+  - *[MongoDBRepository](https://github.com/PHPRepository/mongodb-repository)*: because your schema keeps changing
+- **Caching layer required? Easily to add!**
+  - Require the *[Repository Cache](https://github.com/PHPRepository/repository-cache)* package from Composer to add consistent caching to all operations.
 
 ## Installation
 
@@ -61,7 +77,133 @@ $fileRepository->removeAll();
 ```
 
 
-## Quality
+
+
+---
+
+# Data Operations
+
+All data can be extracted by fields name, using filters, applying ordering and pages, capable of applying fields, filters and ordering criteria.
+
+## Fields
+
+Selecting by field will make hydratation fail. Currently partial object hydratation is not supported.
+
+**Class:** `NilPortugues\Foundation\Domain\Model\Repository\Fields`
+
+**Methods:**
+- `public function __construct(array $fields = [])`
+- `public function add($field)`
+- `public function get()`
+
+## Filtering
+
+**Class:** `NilPortugues\Foundation\Domain\Model\Repository\Filter`
+
+**Methods:**
+- `public function filters()`
+- `public function must()`
+- `public function mustNot()`
+- `public function should()`
+- `public function clear()`
+    
+For **must()**, **mustNot()** and **should()**, the methods available are:
+
+- `public function notStartsWith($filterName, $value)`
+- `public function notEndsWith($filterName, $value)`
+- `public function notEmpty($filterName)`
+- `public function empty($filterName)`
+- `public function startsWith($filterName, $value)`
+- `public function endsWith($filterName, $value)`
+- `public function equal($filterName, $value)`
+- `public function notEqual($filterName, $value)`
+- `public function includeGroup($filterName, array $value)`
+- `public function notIncludeGroup($filterName, array $value)`
+- `public function range($filterName, $firstValue, $secondValue)`
+- `public function notRange($filterName, $firstValue, $secondValue)`
+- `public function notContain($filterName, $value)`
+- `public function contain($filterName, $value)`
+- `public function beGreaterThanOrEqual($filterName, $value)`
+- `public function beGreaterThan($filterName, $value)`
+- `public function beLessThanOrEqual($filterName, $value)`
+- `public function beLessThan($filterName, $value)`
+- `public function clear()`
+- `public function get()`
+- `public function hasEmpty($filterName)` 
+
+## Pagination 
+
+Pagination is handled by two objects, `Pageable` that has the requirements to paginate, and `Page` that it's actually the page with the page data, such as page number, total number, and the data.
+
+### Pageable
+
+**Class:** `NilPortugues\Foundation\Domain\Model\Repository\Pageable`
+
+**Methods:**
+- `public function __construct($pageNumber, $pageSize, Sort $sort = null, Filter $filter = null, Fieldse $fields = null)`
+- `public function offset()`
+- `public function pageNumber()`
+- `public function sortings()`
+- `public function next()`
+- `public function pageSize()`
+- `public function previousOrFirst()`
+- `public function hasPrevious()`
+- `public function first()`
+- `public function filters()`
+- `public function fields()`
+
+### Page object
+
+**Class:** `NilPortugues\Foundation\Domain\Model\Repository\Page`
+
+**Methods:**
+- `public function __construct(array $elements, $totalElements, $pageNumber, $totalPages, Sort $sort = null, Filter $filter = null, Fields $fields = null)`
+- `public function content()`
+- `public function hasPrevious()`
+- `public function isFirst()`
+- `public function isLast()`
+- `public function hasNext()`
+- `public function pageSize()`
+- `public function pageNumber()`
+- `public function totalPages()`
+- `public function nextPageable()`
+- `public function sortings()`
+- `public function filters()`
+- `public function fields()`
+- `public function previousPageable()`
+- `public function totalElements()`
+- `public function map(callable $converter)`
+
+## Sorting
+
+**Class:** `NilPortugues\Foundation\Domain\Model\Repository\Sort`
+
+**Methods:**
+- `public function __construct(array $properties = [], Order $order = null)`
+- `public function andSort(SortInterface $sort)`
+- `public function orders()`
+- `public function equals(SortInterface $sort)`
+- `public function orderFor($propertyName)`
+- `public function setOrderFor($propertyName, Order $order)`
+- `public function property($propertyName)`
+
+### Ordering
+
+Sometimes you want to sort by multiple fields, this is where Order comes in play.
+
+**Class**: `NilPortugues\Foundation\Domain\Model\Repository\Order`
+
+**Methods:**
+- `public function __construct($direction)`
+- `public function isDescending()`
+- `public function isAscending()`
+- `public function __toString()`
+- `public function equals($object)`
+- `public function direction()`
+
+---
+
+# Quality
 
 To run the PHPUnit tests at the command line, go to the tests directory and issue phpunit.
 
@@ -70,7 +212,7 @@ This library attempts to comply with [PSR-1](http://www.php-fig.org/psr/psr-1/),
 If you notice compliance oversights, please send a patch via [Pull Request](https://github.com/nilportugues/php-filesystem-repository/pulls).
 
 
-## Contribute
+# Contribute
 
 Contributions to the package are always welcome!
 
@@ -78,7 +220,7 @@ Contributions to the package are always welcome!
 * You can grab the source code at the package's [Git repository](https://github.com/nilportugues/php-filesystem-repository).
 
 
-## Support
+# Support
 
 Get in touch with me using one of the following means:
 
@@ -86,11 +228,11 @@ Get in touch with me using one of the following means:
  - Opening an [Issue](https://github.com/nilportugues/php-filesystem-repository/issues/new)
 
 
-## Authors
+# Authors
 
 * [Nil Portugués Calderó](http://nilportugues.com)
 * [The Community Contributors](https://github.com/nilportugues/php-filesystem-repository/graphs/contributors)
 
 
-## License
+# License
 The code base is licensed under the [MIT license](LICENSE).
